@@ -1,5 +1,6 @@
 import {createStore} from './lib/state';
-
+import TodoConstants from './constants.js';
+ 
 const initialState = {
     todos: [
         {
@@ -22,7 +23,8 @@ const initialState = {
             text: 'Filter todos by text',
             done: false
         }
-    ]
+    ],
+    filter: TodoConstants.SHOW_ALL
 };
 
 function todoChangeHandler(state, change) {
@@ -42,6 +44,10 @@ function todoChangeHandler(state, change) {
                 }
             }
             break;
+
+        case 'FILTER_TODOS':
+            const {filter} = change;
+            return {...state, filter};
     }
 }
 

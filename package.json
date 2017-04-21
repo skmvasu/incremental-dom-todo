@@ -9,6 +9,9 @@
     "build": "webpack"
   },
   "author": "",
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.23.0"
+  },
   "dependencies": {
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",

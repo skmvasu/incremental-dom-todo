@@ -1,4 +1,4 @@
-import {createStore} from './lib/state';
+import {createStore, applyMiddleware, compose} from 'redux';
 import TodoConstants from './constants.js';
  
 const initialState = {
@@ -7,22 +7,28 @@ const initialState = {
 };
 
 function todoChangeHandler(state, change) {
+    state = state || initialState;
+
     switch(change.type) {
         case 'ADD_TODO':
-            state.todos.push({
+            if (!change.text) return state;
+
+            return {...state, todos: state.todos.concat({
                 id: state.todos.length,
                 text: change.text,
                 done: false
-            });
-            break;
+            })};
+
         case 'TODO_TOGGLE_DONE':
-            for(let todo of state.todos) {
+            const updated_todos = state.todos.map(todo => {
                 if(todo.id === change.id) {
-                    todo.done = !todo.done;
-                    break;
+                    return {...todo, done: !todo.done};
                 }
-            }
-            break;
+
+                return todo;
+            });
+
+            return {...state, todos: updated_todos};
 
         case 'FILTER_TODOS':
             const {filter} = change;
@@ -30,7 +36,13 @@ function todoChangeHandler(state, change) {
 
         case 'INIT_TODOS':
             return {...state, todos: change.todos, filter: change.filter};
+
+        default:
+            return state;
     }
 }
 
-export const todos = createStore(todoChangeHandler, initialState);
+export default createStore(
+    todoChangeHandler, 
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);

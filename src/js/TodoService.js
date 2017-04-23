@@ -1,7 +1,7 @@
 import TodoConstants from './constants.js';
 import {initTodos} from './actions.js';
-import {todos} from './state';
-
+import store from './state';
+import {render} from './view';
 
 const defaultTodos = [{
     id: 0,
@@ -24,17 +24,23 @@ const defaultTodos = [{
     done: false
 }];
 
-export const syncData = (state) => {
+const syncData = () => {
+    const state = store.getState();
 	const {filter, todos} = state;
-	localStorage.setItem('todos', JSON.stringify(todos));
-	localStorage.setItem('filter', filter);
+    render(document.body, state);
+    
+    localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem('filter', filter);
 };
+
+store.subscribe(syncData);
+
 
 export const getInitialState = () => {
 	const filter = localStorage.getItem('filter') || TodoConstants.SHOW_ALL;
-	todos.dispatch(initTodos(getTodos(), filter));
+    const todos = getTodos();
+	store.dispatch(initTodos(todos, filter));
 };
-
 
 const getTodos = () => {
 	const lsTodos = localStorage.getItem('todos');

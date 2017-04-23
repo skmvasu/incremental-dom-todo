@@ -21,3 +21,10 @@ export function filterTodos(filter) {
         filter
     }
 }
+
+export function initTodos(todos, filter) {
+    return {
+        type: 'INIT_TODOS',
+        todos, filter
+    }
+}

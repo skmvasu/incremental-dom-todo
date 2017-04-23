@@ -2,28 +2,7 @@ import {createStore} from './lib/state';
 import TodoConstants from './constants.js';
  
 const initialState = {
-    todos: [
-        {
-            id: 0,
-            text: 'Take a look at the application',
-            done: true
-        },
-        {
-            id: 1,
-            text: 'Add ability to filter todos',
-            done: false
-        },
-        {
-            id: 2,
-            text: 'Filter todos by status',
-            done: false
-        },
-        {
-            id: 3,
-            text: 'Filter todos by text',
-            done: false
-        }
-    ],
+    todos: [],
     filter: TodoConstants.SHOW_ALL
 };
 
@@ -48,6 +27,9 @@ function todoChangeHandler(state, change) {
         case 'FILTER_TODOS':
             const {filter} = change;
             return {...state, filter};
+
+        case 'INIT_TODOS':
+            return {...state, todos: change.todos, filter: change.filter};
     }
 }
 

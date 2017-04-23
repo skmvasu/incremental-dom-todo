@@ -1,3 +1,5 @@
+// WEB-103, WEB-120, WEB-203 and WEB-301
+
 import {isEnabled} from './lib/feature';
 import TodoConstants from './constants.js';
 
@@ -64,6 +66,8 @@ function renderTodoItem(todo) {
 }
 
 function filterTodos(todos, filter) {
+    if (!isEnabled('filter')) return todos;
+
     switch (filter) {
         case TodoConstants.SHOW_DONE:
             return todos.filter(filter => filter.done);

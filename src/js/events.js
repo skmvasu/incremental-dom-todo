@@ -17,5 +17,5 @@ export function registerEventHandlers() {
     listen('click', '.js-todo-filter', event => {
         const {filter} = event.target.dataset;
         todos.dispatch(filterTodos(filter));
-    });
+    }); 
 }

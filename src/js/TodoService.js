@@ -1,7 +1,7 @@
 import TodoConstants from './constants.js';
 import {initTodos} from './actions.js';
 import store from './state';
-import {render} from './view';
+import {renderTodoApp} from './view';
 
 const defaultTodos = [{
     id: 0,
@@ -27,7 +27,7 @@ const defaultTodos = [{
 const syncData = () => {
     const state = store.getState();
 	const {filter, todos} = state;
-    render(document.body, state);
+    renderTodoApp(state);
     
     localStorage.setItem('todos', JSON.stringify(todos));
     localStorage.setItem('filter', filter);

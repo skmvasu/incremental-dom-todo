@@ -1,68 +1,71 @@
 // WEB-103, WEB-120, WEB-203 and WEB-301
-
 import {isEnabled} from './lib/feature';
 import TodoConstants from './constants.js';
+import {patch, elementOpen, elementClose, text, elementVoid} from 'incremental-dom';
 
-export function render(el, state) {
-    const filteredTodos = filterTodos(state.todos, state.filter)
-    const todoItems = filteredTodos.map(renderTodoItem).join('');
-    el.innerHTML = renderApp(
-        renderInput(),
-        renderTodos(todoItems)
-    );
+export function renderTodoApp(state) {
+    patch(document.body, renderApp, state);
 }
 
-function renderApp(input, todoList) {
-    if(isEnabled('renderBottom')) {
-        return renderAddTodoAtBottom(input, todoList);
-    } else {
-        return renderAddTodoAtTop(input, todoList);
-    }
+function renderApp(state) {
+    const renderBottom = isEnabled('renderBottom');
+
+    elementOpen("div", null, ["id", "app"]);
+        !renderBottom && renderInput();
+        renderTodos(state.todos, state.filter);
+        renderFilters();
+        renderBottom && renderInput();
+    elementClose("div")
 }
 
-function renderAddTodoAtTop(input, todoList) {   
-    return `<div id="app">
-        ${input}
-        ${todoList}
-        ${renderFilters(todoList)}
-    </div>`;
-}
-
-function renderAddTodoAtBottom(input, todoList) {
-    return `<div id="app">
-        ${todoList}
-        ${input}
-        ${renderFilters(todoList)}
-    </div>`;
-}
-
-function renderFilters(todoList) {
+function renderFilters() {
     const isFiltersEnabled = isEnabled('filter');
-    if (!isFiltersEnabled) return '';
+    if (!isFiltersEnabled) return null;
 
-    return `
-        <ul id="filters">
-            <li class="js-todo-filter" data-filter=${TodoConstants.SHOW_ALL}>Show All</li>
-            <li class="js-todo-filter" data-filter=${TodoConstants.SHOW_DONE}>Done</li>
-            <li class="js-todo-filter" data-filter=${TodoConstants.SHOW_PENDING}>Pending</li>
-        </ul>
-    `;
+    elementOpen('ul');
+        elementOpen('li', null, [
+            "class", "js-todo-filter",
+            "data-filter", TodoConstants.SHOW_ALL]);
+            text('Show All');
+        elementClose('li');
+        elementOpen('li', null, [
+            "class", "js-todo-filter",
+            "data-filter", TodoConstants.SHOW_DONE]);
+            text('Done');
+        elementClose('li');
+        elementOpen('li', null, [
+            "class", "js-todo-filter",
+            "data-filter", TodoConstants.SHOW_PENDING]);
+            text('Pending');
+        elementClose('li');
+    elementClose('ul');
 }
 
 function renderInput() {
-    return `<div class="todo__input"><input type="text" id="todoInput"><button id="addTodo">Add</button></div>`;
+    elementOpen('div', null, null,
+        "class", "todo__input");
+        elementVoid("input", null, ["id", "todoInput", "type", "text"]);
+        elementOpen("button", null, 
+            ["id", "addTodo",
+            "type", "submit"]);
+            text("Add");
+        elementClose("button");
+    elementClose('div');
 }
 
-function renderTodos(todoItems) {
-    return `<ul class="todo">${todoItems}</ul>`;
-}
-
-function renderTodoItem(todo) {
-    const todoClass = `todo__item todo__item--${todo.done ? 'done' : 'open'}`;
-    return `<li class="${todoClass}">
-        <input class="js_toggle_todo" type="checkbox" data-id="${todo.id}"${todo.done ? ' checked' : ''}>
-        ${todo.text}
-    </li>`;
+function renderTodos(todos, filter) {
+    const filteredTodos = filterTodos(todos, filter);
+    elementOpen('ul', null, null,
+        "class", "todo");
+        filteredTodos.forEach((todo, index) => {
+            elementOpen('li', null, null,
+                "class", `todo__item todo__item--${todo.done ? 'done' : 'open'}`);
+                elementVoid("input", null,
+                    ["type", "checkbox", "data-id", todo.id, "class", "js_toggle_todo"]);
+                text(todo.text);
+            elementClose('li');
+        });
+    elementClose('ul');
 }
 
 function filterTodos(todos, filter) {

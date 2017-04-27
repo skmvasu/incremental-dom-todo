@@ -11,6 +11,10 @@ html, body, .todo {
     margin: 10px;
 }
 
+.todo__item{
+    cursor: pointer;
+}
+
 .todo__item--done {
     text-decoration: line-through;
 }

@@ -1,7 +1,7 @@
 // WEB-103, WEB-120, WEB-203 and WEB-301
 import {isEnabled} from './lib/feature';
 import TodoConstants from './constants.js';
-import {patch, elementOpen, elementClose, text, elementVoid} from 'incremental-dom';
+import {patch, elementOpen, elementClose, text, elementVoid, applyAttr} from 'incremental-dom';
 
 export function renderTodoApp(state) {
     patch(document.body, renderApp, state);
@@ -13,32 +13,30 @@ function renderApp(state) {
     elementOpen("div", null, ["id", "app"]);
         !renderBottom && renderInput();
         renderTodos(state.todos, state.filter);
-        renderFilters();
+        renderFilters(state.filter);
         renderBottom && renderInput();
     elementClose("div")
 }
 
-function renderFilters() {
+function renderFilters(filter) {
     const isFiltersEnabled = isEnabled('filter');
     if (!isFiltersEnabled) return null;
 
-    elementOpen('ul');
-        elementOpen('li', null, [
-            "class", "js-todo-filter",
-            "data-filter", TodoConstants.SHOW_ALL]);
-            text('Show All');
-        elementClose('li');
-        elementOpen('li', null, [
-            "class", "js-todo-filter",
-            "data-filter", TodoConstants.SHOW_DONE]);
-            text('Done');
-        elementClose('li');
-        elementOpen('li', null, [
-            "class", "js-todo-filter",
-            "data-filter", TodoConstants.SHOW_PENDING]);
-            text('Pending');
-        elementClose('li');
-    elementClose('ul');
+    elementOpen('div', null, ["class", "filters"]);
+        Object.keys(TodoConstants).forEach(key => {
+            const isSelected =  TodoConstants[key] === filter;
+            elementOpen('label');
+                const node = elementVoid('input', null, ["type", "radio",
+                    "name", "todo_filter",
+                    "value", TodoConstants[key],
+                    "class", "js-todo-filter" ]);
+                if (isSelected) {
+                    applyAttr(node, "checked", "checked");
+                }
+                text(TodoConstants[key]);
+            elementClose('label');
+        });
+    elementClose('div');
 }
 
 function renderInput() {

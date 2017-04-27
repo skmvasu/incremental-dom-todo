@@ -14,8 +14,8 @@ export function registerEventHandlers() {
         store.dispatch(toggleTodoState(id));
     });
 
-    listen('click', '.js-todo-filter', event => {
-        const {filter} = event.target.dataset;
+    listen('change', '.js-todo-filter', event => {
+        const filter = event.target.value;
         store.dispatch(filterTodos(filter));
     }); 
 }

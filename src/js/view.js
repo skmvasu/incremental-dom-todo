@@ -58,8 +58,13 @@ function renderTodos(todos, filter) {
         filteredTodos.forEach((todo, index) => {
             elementOpen('li', null, null,
                 "class", `todo__item todo__item--${todo.done ? 'done' : 'open'}`);
-                elementVoid("input", null,
+                const node = elementVoid("input", null,
                     ["type", "checkbox", "data-id", todo.id, "class", "js_toggle_todo"]);
+                if (todo.done) {
+                    applyAttr(node, "checked", "checked");
+                } else {
+                    node.removeAttribute("checked");
+                }
                 text(todo.text);
             elementClose('li');
         });
